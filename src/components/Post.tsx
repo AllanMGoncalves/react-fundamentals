@@ -15,22 +15,27 @@ interface Author {
 }
 
 interface Content {
-	type: string;
+	type: 'paragraph' | 'link' | 'tag';
 	content: string;
 }
 
-interface PostProps {
+export interface PostType {
+	id: number;
 	author: Author;
-	publishedAt: Date;
 	content: Content[];
+	publishedAt: Date;
 }
 
-export function Post({ author, publishedAt, content }: PostProps) {
+interface PostProps {
+	post: PostType;
+}
+
+export function Post({ post }: PostProps) {
 	const [comments, setComments] = useState(["That's a nice post 👏"]);
 	const [newCommentText, setNewCommentText] = useState('');
 
-	const publishedDateFormatted = format(publishedAt, "LLLL dd',' yyyy 'at' hh:mmaaa", { locale: enUS });
-	const publishedDateRelativetoNow = formatDistanceToNow(publishedAt, {
+	const publishedDateFormatted = format(post.publishedAt, "LLLL dd',' yyyy 'at' hh:mmaaa", { locale: enUS });
+	const publishedDateRelativetoNow = formatDistanceToNow(post.publishedAt, {
 		locale: enUS,
 		addSuffix: true,
 	});
@@ -65,19 +70,19 @@ export function Post({ author, publishedAt, content }: PostProps) {
 		<article className={styles.post}>
 			<header>
 				<div className={styles.author}>
-					<Avatar src={author.avatarUrl} />
+					<Avatar src={post.author.avatarUrl} />
 					<div className={styles.authorInfo}>
-						<strong>{author.name}</strong>
-						<span>{author.role}</span>
+						<strong>{post.author.name}</strong>
+						<span>{post.author.role}</span>
 					</div>
 				</div>
-				<time title={publishedDateFormatted} dateTime={publishedAt.toISOString()}>
+				<time title={publishedDateFormatted} dateTime={post.publishedAt.toISOString()}>
 					{publishedDateRelativetoNow}
 				</time>
 			</header>
 
 			<div className={styles.content}>
-				{content.map(line => {
+				{post.content.map(line => {
 					switch (line.type) {
 						case 'paragraph':
 							return <p key={line.content}>{line.content}</p>;
@@ -90,7 +95,7 @@ export function Post({ author, publishedAt, content }: PostProps) {
 					}
 				})}
 				<ul className={styles.tags}>
-					{content.map(line => {
+					{post.content.map(line => {
 						if (line.type === 'tag')
 							return (
 								<li key={line.content}>
