@@ -125,7 +125,7 @@
 	transition: background-color 0.175s linear;
 }
 
-.commentForm button[type='submit']:not('disabled'):hover {
+.commentForm button[type='submit']:not([disabled]):hover {
 	background: var(--green-light);
 }
 .commentForm button[type='submit']:disabled {
